@@ -138,26 +138,22 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
   perspective:1600px;
   outline:none;
 }
-.envelope:focus-visible .envelope-seal{
+.envelope:focus-visible .envelope-overlay-seal{
   box-shadow:0 0 0 4px rgba(212,144,138,.18),0 10px 20px rgba(165,102,92,.24);
 }
 .envelope-shell{
   position:relative;
-  height:470px;
-  overflow:hidden;
-  border-radius:28px 28px 26px 26px;
+  width:100%;
   filter:drop-shadow(0 24px 50px rgba(140,88,70,.16));
 }
-.envelope.open .envelope-shell{overflow:visible}
 .envelope-paper{
-  position:absolute;left:50%;bottom:24px;transform:translateX(-50%) translateY(132px);
+  position:relative;
   width:calc(100% - 44px);min-height:355px;
+  margin:0 auto;
   background:linear-gradient(180deg,#fffdf9 0%,#fff7ef 100%);
   border:1px solid #efd8c5;border-radius:22px 22px 16px 16px;
   padding:2.4rem 2.3rem 2rem;
   box-shadow:0 10px 25px rgba(120,73,53,.1);
-  transition:transform .8s cubic-bezier(.2,.7,.1,1),box-shadow .5s ease;
-  transform-origin:bottom center;
   z-index:1;overflow:hidden;
 }
 .envelope-paper::before{
@@ -168,63 +164,55 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
   pointer-events:none;opacity:.8;
 }
 .envelope-inner{position:relative;z-index:1}
-.envelope-cover{
-  position:absolute;inset:auto 0 0 0;height:255px;
+.envelope-overlay{
+  position:absolute;inset:0;
+  z-index:3;
+  transition:opacity .45s ease,transform .45s ease;
+}
+.envelope-overlay-top{
+  position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:calc(100% - 44px);height:222px;
+  background:linear-gradient(180deg,#f8e8dc 0%,#eed2bf 100%);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  box-shadow:0 6px 18px rgba(160,106,85,.08);
+}
+.envelope-overlay-bottom{
+  position:absolute;left:50%;bottom:18px;transform:translateX(-50%);
+  width:calc(100% - 28px);height:170px;
   background:linear-gradient(180deg,#f4e0d2 0%,#ecd2c0 100%);
   border:1px solid #e7c7b1;border-radius:0 0 26px 26px;
-  z-index:3;
+  overflow:hidden;
 }
-.envelope-cover::before,.envelope-cover::after{
+.envelope-overlay-bottom::before,.envelope-overlay-bottom::after{
   content:'';position:absolute;bottom:0;width:50%;height:100%;
   background:linear-gradient(180deg,#efd9c8 0%,#e2bfa8 100%);
 }
-.envelope-cover::before{
+.envelope-overlay-bottom::before{
   left:0;clip-path:polygon(0 0,100% 100%,0 100%);
-  border-bottom-left-radius:26px;
 }
-.envelope-cover::after{
+.envelope-overlay-bottom::after{
   right:0;clip-path:polygon(100% 0,100% 100%,0 100%);
-  border-bottom-right-radius:26px;
 }
-.envelope-flap{
-  position:absolute;left:0;right:0;top:0;height:240px;
-  transform-origin:top center;
-  transition:transform .8s cubic-bezier(.2,.7,.1,1),opacity .35s ease;
-  z-index:4;
-  backface-visibility:hidden;
-}
-.envelope-flap::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,#f8e8dc 0%,#eed2bf 100%);
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  border:1px solid #e7c7b1;border-bottom:none;
-  box-shadow:0 8px 18px rgba(160,106,85,.1);
-  backface-visibility:hidden;
-}
-.envelope-seal{
-  position:absolute;left:50%;top:145px;transform:translateX(-50%);
+.envelope-overlay-seal{
+  position:absolute;left:50%;top:158px;transform:translateX(-50%);
   width:66px;height:66px;border-radius:50%;
   background:radial-gradient(circle at 30% 30%,#f6d2c9,#d4908a 70%);
   color:var(--w);display:grid;place-items:center;
   font-family:'Playfair Display',serif;font-size:1.5rem;
-  box-shadow:0 10px 20px rgba(165,102,92,.24);
-  z-index:5;transition:transform .45s ease,opacity .35s ease;
+  box-shadow:0 10px 20px rgba(165,102,92,.24);z-index:4;
 }
 .envelope-hint{
   margin-top:1.2rem;
   font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
   color:var(--muted);text-align:center;
+  transition:opacity .35s ease;
 }
-.envelope.open .envelope-flap{
-  transform:rotateX(182deg);
+.envelope.open .envelope-overlay{
   opacity:0;
   pointer-events:none;
+  transform:translateY(-10px) scale(.985);
 }
-.envelope.open .envelope-paper{
-  transform:translateX(-50%) translateY(-146px);
-  box-shadow:0 26px 50px rgba(120,73,53,.16);
-}
-.envelope.open .envelope-seal{transform:translateX(-50%) scale(.88);opacity:0}
+.envelope.open .envelope-hint{opacity:.45}
 .letter-text{
   font-family:'Quicksand',sans-serif;
   font-size:clamp(1.04rem,2.45vw,1.18rem);
@@ -245,13 +233,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
   text-align:right;
 }
 @media (max-width:640px){
-  .envelope-shell{height:440px}
   .envelope-paper{
     width:calc(100% - 24px);min-height:340px;
     padding:2rem 1.4rem 1.8rem;
-    transform:translateX(-50%) translateY(118px);
   }
-  .envelope.open .envelope-paper{transform:translateX(-50%) translateY(-118px)}
+  .envelope-overlay-top{width:calc(100% - 24px);height:198px}
+  .envelope-overlay-bottom{width:calc(100% - 12px);height:160px}
+  .envelope-overlay-seal{top:142px}
 }
 
 /* ── PHOTOS ── */
@@ -426,9 +414,11 @@ footer{position:relative;z-index:1;text-align:center;padding:2.5rem;font-size:.6
           <p class="letter-sig">— bé iu của Hồng Thái 💕</p>
         </div>
       </div>
-      <div class="envelope-cover"></div>
-      <div class="envelope-flap"></div>
-      <div class="envelope-seal">❤</div>
+      <div class="envelope-overlay" aria-hidden="true">
+        <div class="envelope-overlay-top"></div>
+        <div class="envelope-overlay-bottom"></div>
+        <div class="envelope-overlay-seal">❤</div>
+      </div>
     </div>
     <p class="envelope-hint">ấn vào lá thư để mở ra</p>
   </div>
@@ -525,8 +515,9 @@ let blown=false;
 const loveLetter=document.getElementById('loveLetter');
 function toggleLetter(){
   if(!loveLetter)return;
-  const isOpen=loveLetter.classList.toggle('open');
-  loveLetter.setAttribute('aria-expanded',isOpen?'true':'false');
+  if(loveLetter.classList.contains('open'))return;
+  loveLetter.classList.add('open');
+  loveLetter.setAttribute('aria-expanded','true');
 }
 function handleLetterKey(e){
   if(e.key==='Enter'||e.key===' '){

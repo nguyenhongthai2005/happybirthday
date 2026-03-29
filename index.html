@@ -387,19 +387,41 @@ for(let i=0;i<55;i++)petals.push(new Petal(true));
 (function loop(){ctx.clearRect(0,0,W,H);petals.forEach(p=>{p.update();p.draw()});requestAnimationFrame(loop)})();
 
 /* ── MUSIC ── */
-const MUSIC_ID='GtNzlnzSCjo'; // Soft romantic piano
+const MUSIC_ID='S7KA4tQ483o'; // HIEUTHUHAI - Ngay Giay Nay
+const MUSIC_START=9;
 let musicOn=false;
+let musicWanted=true;
 const ytFrame=document.getElementById('ytFrame'),musicBtn=document.getElementById('musicBtn');
+function setMusicUi(isPlaying){
+  musicBtn.textContent=isPlaying?'🎶':'🎵';
+  musicBtn.classList.toggle('playing',isPlaying);
+}
+function startMusic(){
+  ytFrame.src=`https://www.youtube.com/embed/${MUSIC_ID}?autoplay=1&loop=1&playlist=${MUSIC_ID}&controls=0&start=${MUSIC_START}`;
+  musicOn=true;
+  setMusicUi(true);
+}
+function stopMusic(){
+  ytFrame.src='about:blank';
+  musicOn=false;
+  setMusicUi(false);
+}
 function toggleMusic(){
-  if(!musicOn){
-    ytFrame.src=`https://www.youtube.com/embed/${MUSIC_ID}?autoplay=1&loop=1&playlist=${MUSIC_ID}&controls=0`;
-    musicBtn.textContent='🎶';musicBtn.classList.add('playing');musicOn=true;
-  }else{
-    ytFrame.src='about:blank';musicBtn.textContent='🎵';musicBtn.classList.remove('playing');musicOn=false;
-  }
+  musicWanted=!musicOn;
+  if(musicOn)stopMusic();
+  else startMusic();
 }
 
 /* ── BLOW CANDLES ── */
+/* Retry autoplay after the first user gesture if the browser blocks it on load */
+window.addEventListener('load',()=>{
+  if(musicWanted)startMusic();
+});
+['pointerdown','touchstart','keydown'].forEach(evt=>{
+  window.addEventListener(evt,()=>{
+    if(musicWanted&&!musicOn)startMusic();
+  },{once:true});
+});
 let blown=false;
 function blowCandles(){
   if(blown)return;blown=true;
